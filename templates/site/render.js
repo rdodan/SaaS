@@ -182,7 +182,7 @@
     <div class="slide slide-intro" data-slide="0">
       <div class="intro-logo">${logo(b)}</div>
       ${b.tagline ? `<p class="intro-tag">${esc(b.tagline)}</p>` : ""}
-      <p class="scroll-cue"><span>Scroll to begin</span><i aria-hidden="true"></i></p>
+      <p class="scroll-cue"><span>Scroll</span><i aria-hidden="true"></i></p>
     </div>
     ${list(chapters, (c, i) => `
     <div class="slide" data-slide="${i + 1}">
@@ -261,7 +261,7 @@
   ${list(s.items, (item, i) => `
   <article class="pack reveal">
     <div class="pack-main">
-      <p class="kicker">Package ${String(i + 1).padStart(2, "0")}</p>
+      <p class="kicker">Option ${i + 1}</p>
       <h3>${esc(item.name)}</h3>
       <p class="lede">${esc(item.text)}</p>
       ${item.price ? `<p class="price">${esc(item.price)}</p>` : ""}
@@ -273,7 +273,7 @@
     <div class="pack-lists">
       ${list(item.groups, (g) => `<div><h4>${esc(g.label)}</h4><ul>${list(g.items, (x) => `<li>${esc(x)}</li>`)}</ul></div>`)}
       ${item.steps && item.steps.length ? `
-      <details class="acc wide"><summary>How we do it, step by step</summary>
+      <details class="acc wide"><summary>What happens, in order</summary>
         <ol>${list(item.steps, (x) => `<li>${esc(x)}</li>`)}</ol>
       </details>` : ""}
     </div>
@@ -432,7 +432,7 @@
   </div>
   <div class="areas">
     <div class="town-check reveal">
-      <h3><label for="town">Do we come to your town?</label></h3>
+      <h3><label for="town">Check your town</label></h3>
       <input id="town" type="search" placeholder="Type your town" autocomplete="off">
       <p id="town-result" role="status"></p>
     </div>
@@ -485,7 +485,7 @@
       </div>
     </fieldset>`)}
     <fieldset class="wstep" data-step="${steps.length}" ${steps.length ? "hidden" : ""}>
-      <legend><span class="kicker">Step ${total} of ${total}</span>Last step: how do we reach you?</legend>
+      <legend><span class="kicker">Step ${total} of ${total}</span>Where should we reply?</legend>
       <label>Name<input name="name" autocomplete="name" required></label>
       <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
       <label>Email <small>(optional)</small><input name="email" type="email" autocomplete="email"></label>
@@ -496,7 +496,7 @@
     <div class="wizard-nav">
       <button type="button" class="btn ghost" data-back hidden>Back</button>
       <button type="button" class="btn" data-next>Next</button>
-      <button type="submit" class="btn" data-send hidden>${esc(s.submit || "Request my quote")}</button>
+      <button type="submit" class="btn" data-send hidden>${esc(s.submit || "Send my request")}</button>
     </div>
     <div class="wizard-done" hidden>
       <h3>Thank you.</h3>
