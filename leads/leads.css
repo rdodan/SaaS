@@ -48,6 +48,7 @@ legend { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; padding: 0
 }
 .ghost:hover { border-color: var(--brand); }
 .ghost.file { display: inline-block; }
+.linklike.plain { color: var(--brand); font-size: inherit; }
 .linklike { font: inherit; color: var(--bad); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 
 .table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }

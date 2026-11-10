@@ -164,9 +164,9 @@
       gaps.push({ label, strong });
       score += points;
     };
-    if (!lead.website) add("No website listed", 50, true);
-    else if (isSocial(lead.website)) add("Social page as website", 35, true);
-    else if (lead.website.startsWith("http://")) add("Site not secure (http)", 10);
+    if (!lead.website && !lead.siteFound) add("No website listed", 50, true);
+    else if (lead.website && isSocial(lead.website)) add("Social page as website", 35, true);
+    else if (lead.website && lead.website.startsWith("http://")) add("Site not secure (http)", 10);
     if (lead.rating !== "" && lead.rating != null && Number(lead.rating) < 4) add("Low rating", 30, true);
     if (lead.reviews !== "" && lead.reviews != null && Number(lead.reviews) < 15) add("Few reviews", 15);
     if (!lead.hours) add("No opening hours listed", 5);
@@ -200,10 +200,10 @@
     const rated = lead.rating !== "" && lead.rating != null;
     let noticed;
     let why;
-    if (!lead.website) {
+    if (!lead.website && !lead.siteFound) {
       noticed = "I could not find a website for you";
       why = "Most people look a business up online before they call. A simple, fast site with your services, opening hours and phone number usually pays for itself quickly.";
-    } else if (isSocial(lead.website)) {
+    } else if (lead.website && isSocial(lead.website)) {
       noticed = "your social media page is doing the job of a website";
       why = "That works for people who already follow you, but it is hard to find on Google, and new customers often cannot see your prices or opening hours at a glance.";
     } else if (rated && Number(lead.rating) < 4) {
@@ -212,7 +212,7 @@
     } else if (lead.reviews !== "" && lead.reviews != null && Number(lead.reviews) < 15) {
       noticed = `you only have ${lead.reviews} Google reviews`;
       why = "Businesses with more recent reviews show up higher and get more calls. I set up a simple way to ask happy customers for one.";
-    } else if (lead.website.startsWith("http://")) {
+    } else if (lead.website && lead.website.startsWith("http://")) {
       noticed = "your website shows a \"not secure\" warning in some browsers";
       why = "That puts some visitors off before they read a word. It is usually a quick fix, and a good moment to freshen the site up.";
     } else {
@@ -291,6 +291,13 @@
     if (lead.website) contact.append(el("div", {}, [link(lead.website, new URL(lead.website).hostname.replace(/^www\./, ""))]));
     if (lead.social) contact.append(el("div", {}, [link(lead.social, "Social page")]));
     contact.append(el("div", {}, [link(mapsUrl(lead), "Open in Google Maps")]));
+    contact.append(el("div", {}, [link("https://www.google.com/search?q=" + encodeURIComponent(lead.name + " " + (lead.address || "")), "Google this business")]));
+    // OpenStreetMap often has no website recorded for a business that does have one.
+    if (!lead.website) {
+      const siteBtn = el("button", { type: "button", className: "linklike plain", textContent: lead.siteFound ? "Undo: no website after all" : "Has a website" });
+      siteBtn.dataset.site = lead.id;
+      contact.append(el("div", {}, [siteBtn]));
+    }
     if (!lead.email) contact.append(el("div", {}, [link("https://www.google.com/search?q=" + encodeURIComponent('"' + lead.name + '" ' + (lead.address || "") + " email contact"), "Search for an email")]));
     const draftBtn = el("button", { type: "button", className: "draft-btn", textContent: followUpDue(lead) ? "Draft follow-up" : "Draft email" });
     draftBtn.dataset.draft = lead.id;
@@ -332,7 +339,7 @@
         if (hideChains && lead.chain) return false;
         if (hasEmail && !lead.email) return false;
         if (status === "due") return followUpDue(lead);
-        if (noWeb && lead.website) return false;
+        if (noWeb && (lead.website || lead.siteFound)) return false;
         if (group && lead.group !== group) return false;
         if (status && (lead.status || "New") !== status) return false;
         if (q && !(lead.name + " " + lead.address + " " + lead.kind).toLowerCase().includes(q)) return false;
@@ -468,7 +475,7 @@
     const head = ["Name", "Type", "Address", "Phone", "Email", "Website", "Social", "Rating", "Reviews", "Gaps", "Score", "Stage", "Notes", "Google Maps"];
     const lines = visible().map((lead) => {
       const { gaps, score } = assess(lead);
-      return [lead.name, lead.kind, lead.address, lead.phone, lead.email, lead.website, lead.social, lead.rating, lead.reviews,
+      return [lead.name, lead.kind, lead.address, lead.phone, lead.email, lead.website || (lead.siteFound ? "yes (checked by hand)" : ""), lead.social, lead.rating, lead.reviews,
         gaps.map((g) => g.label).join("; "), score, lead.status || "New", lead.notes, mapsUrl(lead)].map(csvCell).join(",");
     });
     download("leads.csv", "text/csv", "﻿" + [head.map(csvCell).join(","), ...lines].join("\r\n"));
@@ -534,6 +541,12 @@
   $("view-map").addEventListener("click", () => setView(true));
   $("rows").addEventListener("click", (event) => {
     if (event.target.dataset.draft) openDraft(event.target.dataset.draft);
+    const lead = leads[event.target.dataset.site];
+    if (lead) {
+      lead.siteFound = !lead.siteFound;
+      save();
+      render();
+    }
   });
   $("draft-cancel").addEventListener("click", () => $("draft").close());
   $("draft-copy").addEventListener("click", async () => {
