@@ -40,6 +40,36 @@ endpoint (for example Formspree or Web3Forms) and paste its URL into `formEndpoi
 - The public OpenStreetMap servers are shared and rate limited. If a search says the
   server is busy, wait a minute or use a smaller radius.
 
+## Client-site templates and catalog
+
+`templates/` holds a reusable site for client businesses and a catalog page to show prospects.
+
+- **Catalog:** open `templates/index.html`. It previews every example and is linked from the agency site as "Examples".
+- **One template, many looks:** each business is a single config file in `templates/sites/` holding its
+  colours, fonts, wording, services, towns, questions and quote steps. The three examples
+  (`detailing`, `barber`, `trades`) are made-up businesses with placeholder details.
+- **What every site includes:** a scroll-through opening, before/after slider, service packages,
+  process steps, photo gallery, town checker, FAQ, multi-step quote form, scripted chat, and a
+  Call / Text / Quote bar on phones. Leave a section out of the config and it is not shown.
+
+### New client site
+
+1. Copy the closest example in `templates/sites/` to `templates/sites/<client>.js` and edit it.
+2. Preview at `templates/site/?site=<client>`.
+3. Add photos by setting `image`, `before` and `after` paths in the config. Until then, coloured placeholders are shown.
+4. Export a static site to upload to any host (needs Node.js):
+
+```bash
+node tools/export-site.js <client>
+```
+
+   The result is in `dist/<client>/`, with all text in the HTML for search engines.
+
+To use real footage in the opening, export a short clip as numbered JPGs and set
+`film.sequence` in the config (see the comment in `detailing.js`). Without it, the opening
+uses moving light in the brand colour. Set `quote.endpoint` to a form service URL to
+receive quote requests directly; left empty, the form opens the visitor's email app.
+
 ## Publish for free
 
 Any static host works. Two options:

@@ -138,6 +138,28 @@ Start with what a phone can do well.
 - Reuse each video: Google profile, website, Instagram Reels, TikTok, YouTube Shorts, Facebook.
 - Get written permission from anyone who appears on camera.
 
+### Selling a website: how the conversation goes
+
+Most local owners cannot describe the site they want, but they know instantly what they
+like when they see it. So show, do not ask.
+
+1. **Show two or three examples** from the catalog (`templates/`) on your phone or
+   laptop. More than three and people stall.
+2. **Ask about the business, not the website:** what do you want people to do (call,
+   book, visit)? Which jobs make you the most money? Which areas do you cover? What do
+   customers always ask?
+3. **Build a preview with their name, colours and services** before they pay. Copying a
+   config takes under an hour, and a site with their own name on it sells itself.
+4. **Agree the scope in writing:** pages and sections, who supplies photos and text,
+   two rounds of changes, the price and the date.
+5. **Collect the content:** logo, 10 to 20 real photos, services and prices, towns
+   covered, opening hours. Content is what delays projects, so chase it early.
+6. **Launch, then offer the care plan:** hosting, small changes, Google profile posts
+   and a monthly report.
+
+Keep the choice small. "Which of these three do you like, and what colour is your van?"
+gets a faster yes than a blank page.
+
 ## 5. Pricing to start
 
 Adjust to your area; these are starting shapes, not rules.
