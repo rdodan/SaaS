@@ -62,6 +62,22 @@ Email version, kept short:
 >
 > [Your name], [phone]
 
+The lead finder writes this email for you ("Draft email") and tracks follow-ups, but it
+deliberately leaves the sending to you, one message at a time, from your own mailbox:
+
+- **Deliverability.** Dozens of identical cold emails from a new address get it flagged as
+  spam within days, and then your real client emails stop arriving too. A handful of
+  individually checked emails a day does not.
+- **The law.** Rules on unsolicited business email differ by country. Some require consent
+  first, and sole traders are often treated as private individuals. Check the rules where
+  you are before emailing at volume. Everywhere: say who you are, use only a published
+  business address, and stop when asked.
+- **Results.** A message that mentions one real, checked detail gets replies. A blast does not.
+
+A realistic routine: 15 minutes a day, 5 to 10 checked emails, plus calls or visits to the
+best prospects that have no email. Businesses with no website often have no public email
+either, so the phone and the front door stay your best tools for exactly the leads you want most.
+
 Rules: one specific observation per message, never criticise their business, one
 follow-up after a week and then stop. Email only published business addresses, say who
 you are, and stop if they ask. Marketing email rules differ by country, so check yours

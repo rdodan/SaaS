@@ -23,6 +23,11 @@
     { id: "shops", label: "Other shops", on: false, tags: { shop: "*" } },
   ];
 
+  const cfg = window.SITE_CONFIG || {};
+  const FOLLOW_UP_DAYS = 7;
+  // Which example site to link for each kind of business.
+  const EXAMPLE = { food: "restaurant", beauty: "barber", fitness: "gym", auto: "detailing" };
+
   const $ = (id) => document.getElementById(id);
   let leads = load();
   let shown = PAGE;
@@ -164,6 +169,82 @@
     return { gaps, score };
   }
 
+  // ---------- outreach emails ----------
+
+  function followUpDue(lead) {
+    return lead.status === "Contacted" && lead.contactedAt && Date.now() - lead.contactedAt > FOLLOW_UP_DAYS * 86400000;
+  }
+
+  function exampleLink(lead) {
+    if (!cfg.siteUrl) return "[add your site address to config.js]";
+    return cfg.siteUrl.replace(/\/+$/, "") + "/templates/site/index.html?site=" + (EXAMPLE[lead.group] || "trades");
+  }
+
+  // Writes a first email built around the most obvious gap, or a short follow-up
+  // if the business was already contacted more than a week ago.
+  function compose(lead) {
+    const me = cfg.yourName || "[your name]";
+    const sign = [me, cfg.name, cfg.phone].filter(Boolean).join("\n");
+    const optOut = "If you would rather not hear from me again, just reply and say so.";
+    if (followUpDue(lead)) {
+      return {
+        subject: "Re: " + lead.name + " online",
+        body: `Hi,\n\nI sent a note last week about ${lead.name} and wanted to check it reached you.\n\nThe offer stands: I can put together a free preview of a site with your name, colours and services on it, so you can see it before deciding anything. Here is an example: ${exampleLink(lead)}\n\nNo worries at all if now is not the time.\n\n${sign}\n\n${optOut}`,
+      };
+    }
+    const rated = lead.rating !== "" && lead.rating != null;
+    let noticed;
+    let why;
+    if (!lead.website) {
+      noticed = "I could not find a website for you";
+      why = "Most people look a business up online before they call. A simple, fast site with your services, opening hours and phone number usually pays for itself quickly.";
+    } else if (isSocial(lead.website)) {
+      noticed = "your social media page is doing the job of a website";
+      why = "That works for people who already follow you, but it is hard to find on Google, and new customers often cannot see your prices or opening hours at a glance.";
+    } else if (rated && Number(lead.rating) < 4) {
+      noticed = `your Google rating is ${lead.rating}${lead.reviews ? " from " + lead.reviews + " reviews" : ""}, which I suspect does not reflect the work you do`;
+      why = "A handful of recent reviews from happy customers moves that number quickly. I set up a simple way to ask for them, and help with replies to the difficult ones.";
+    } else if (lead.reviews !== "" && lead.reviews != null && Number(lead.reviews) < 15) {
+      noticed = `you only have ${lead.reviews} Google reviews`;
+      why = "Businesses with more recent reviews show up higher and get more calls. I set up a simple way to ask happy customers for one.";
+    } else if (lead.website.startsWith("http://")) {
+      noticed = "your website shows a \"not secure\" warning in some browsers";
+      why = "That puts some visitors off before they read a word. It is usually a quick fix, and a good moment to freshen the site up.";
+    } else {
+      noticed = "a few things that could bring you more customers from Google";
+      why = "I would be glad to send you a short free report with the three fixes I would make first.";
+    }
+    return {
+      subject: "Quick note about " + lead.name + " online",
+      body: `Hi,\n\nI'm ${me}, a web developer based in ${cfg.area || "[your area]"}. I was looking at ${lead.name} online and noticed ${noticed}.\n\n${why}\n\nHere is an example of the kind of site I build for businesses like yours: ${exampleLink(lead)}\n\nWould it be useful if I put together a quick preview with your name, colours and services on it? It is free and there is no obligation.\n\n${sign}\n\n${optOut}`,
+    };
+  }
+
+  let drafting = null;
+  function openDraft(id) {
+    const lead = leads[id];
+    if (!lead) return;
+    drafting = lead;
+    const mail = compose(lead);
+    $("draft-name").textContent = lead.name;
+    $("draft-to").value = lead.email || "";
+    $("draft-subject").value = mail.subject;
+    $("draft-body").value = mail.body;
+    const missing = [!cfg.yourName && "your name", !cfg.siteUrl && "your site address"].filter(Boolean);
+    $("draft-warn").hidden = !missing.length;
+    $("draft-warn").textContent = missing.length ? "Add " + missing.join(" and ") + " to config.js so the email is complete." : "";
+    $("draft").showModal();
+  }
+
+  function markContacted() {
+    if (!drafting) return;
+    drafting.email = $("draft-to").value.trim();
+    drafting.status = "Contacted";
+    drafting.contactedAt = Date.now();
+    save();
+    render();
+  }
+
   // ---------- rendering ----------
 
   function el(tag, props, children) {
@@ -191,6 +272,7 @@
     const wrap = el("div", { className: "gaps" });
     if (!gaps.length) wrap.append(el("span", { className: "gap none", textContent: "Nothing obvious" }));
     gaps.forEach((gap) => wrap.append(el("span", { className: "gap" + (gap.strong ? " strong" : ""), textContent: gap.label })));
+    if (followUpDue(lead)) wrap.append(el("span", { className: "gap due", textContent: "Follow-up due" }));
     return [wrap, el("div", { className: "score", textContent: "Opportunity score " + score })];
   }
 
@@ -204,6 +286,10 @@
     if (lead.website) contact.append(el("div", {}, [link(lead.website, new URL(lead.website).hostname.replace(/^www\./, ""))]));
     if (lead.social) contact.append(el("div", {}, [link(lead.social, "Social page")]));
     contact.append(el("div", {}, [link(mapsUrl(lead), "Open in Google Maps")]));
+    if (!lead.email) contact.append(el("div", {}, [link("https://www.google.com/search?q=" + encodeURIComponent('"' + lead.name + '" ' + (lead.address || "") + " email contact"), "Search for an email")]));
+    const draftBtn = el("button", { type: "button", className: "draft-btn", textContent: followUpDue(lead) ? "Draft follow-up" : "Draft email" });
+    draftBtn.dataset.draft = lead.id;
+    contact.append(draftBtn);
 
     const rating = el("input", { type: "number", min: 1, max: 5, step: 0.1, placeholder: "Stars", value: lead.rating ?? "", ariaLabel: "Star rating" });
     rating.dataset.field = "rating";
@@ -235,9 +321,12 @@
     const status = $("f-status").value;
     const noWeb = $("f-noweb").checked;
     const hideChains = $("f-chains").checked;
+    const hasEmail = $("f-email").checked;
     return Object.values(leads)
       .filter((lead) => {
         if (hideChains && lead.chain) return false;
+        if (hasEmail && !lead.email) return false;
+        if (status === "due") return followUpDue(lead);
         if (noWeb && lead.website) return false;
         if (group && lead.group !== group) return false;
         if (status && (lead.status || "New") !== status) return false;
@@ -256,6 +345,58 @@
     $("empty").hidden = total > 0;
     $("more").hidden = list.length <= shown;
     $("count").textContent = total ? `Showing ${Math.min(shown, list.length)} of ${list.length} matching (${total} saved), best opportunities first.` : "";
+    if (!$("map-wrap").hidden) drawMap(list);
+  }
+
+  // ---------- map ----------
+
+  let map = null;
+  let markers = null;
+  function drawMap(list) {
+    if (!window.L) return;
+    if (!map) {
+      map = L.map("map");
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }).addTo(map);
+      markers = L.layerGroup().addTo(map);
+    }
+    markers.clearLayers();
+    const points = [];
+    list.forEach((lead) => {
+      if (lead.lat == null || lead.lon == null) return;
+      const score = assess(lead).score;
+      const contacted = lead.status && lead.status !== "New";
+      const colour = contacted ? "#8a8f98" : score >= 50 ? "#d1432b" : score >= 15 ? "#e0a100" : "#5d8a6f";
+      const marker = L.circleMarker([lead.lat, lead.lon], { radius: 8, color: "#fff", weight: 2, fillColor: colour, fillOpacity: 0.95 });
+      marker.bindPopup(() => popup(lead));
+      marker.addTo(markers);
+      points.push([lead.lat, lead.lon]);
+    });
+    map.invalidateSize();
+    if (points.length) map.fitBounds(points, { padding: [30, 30], maxZoom: 16 });
+    else map.setView([20, 0], 2);
+  }
+
+  function popup(lead) {
+    const actions = el("div", { className: "pop-actions" });
+    if (lead.phone) actions.append(el("a", { href: "tel:" + lead.phone.replace(/[^\d+]/g, ""), textContent: lead.phone }));
+    actions.append(link(mapsUrl(lead), "Google Maps"));
+    const draftBtn = el("button", { type: "button", className: "draft-btn", textContent: followUpDue(lead) ? "Draft follow-up" : "Draft email" });
+    draftBtn.addEventListener("click", () => openDraft(lead.id));
+    actions.append(draftBtn);
+    return el("div", {}, [
+      el("div", { className: "name", textContent: lead.name }),
+      el("div", { className: "sub", textContent: [lead.kind, lead.address, lead.status && lead.status !== "New" ? lead.status : ""].filter(Boolean).join(" · ") }),
+      ...gapsCell(lead),
+      actions,
+    ]);
+  }
+
+  function setView(showMap) {
+    $("map-wrap").hidden = !showMap;
+    $("list-wrap").hidden = showMap;
+    $("view-map").setAttribute("aria-pressed", String(showMap));
+    $("view-list").setAttribute("aria-pressed", String(!showMap));
+    if (showMap) drawMap(visible());
   }
 
   function setStatus(text, isError) {
@@ -355,10 +496,11 @@
     $("f-group").append(el("option", { value: group.id, textContent: group.label }));
   });
   STAGES.forEach((name) => $("f-status").append(el("option", { value: name, textContent: name })));
+  $("f-status").append(el("option", { value: "due", textContent: "Follow-up due" }));
   $("place").value = localStorage.getItem(STORE_KEY + ".place") || (window.SITE_CONFIG || {}).leadFinderDefaultPlace || "";
 
   $("search").addEventListener("submit", search);
-  ["q", "f-group", "f-status", "f-noweb", "f-chains"].forEach((id) =>
+  ["q", "f-group", "f-status", "f-noweb", "f-chains", "f-email"].forEach((id) =>
     $(id).addEventListener("input", () => {
       shown = PAGE;
       render();
@@ -378,6 +520,29 @@
     lead[field] = event.target.value;
     save();
     if (field === "rating" || field === "reviews") tr.querySelector(".gaps-cell").replaceChildren(...gapsCell(lead));
+  });
+
+  $("view-list").addEventListener("click", () => setView(false));
+  $("view-map").addEventListener("click", () => setView(true));
+  $("rows").addEventListener("click", (event) => {
+    if (event.target.dataset.draft) openDraft(event.target.dataset.draft);
+  });
+  $("draft-cancel").addEventListener("click", () => $("draft").close());
+  $("draft-copy").addEventListener("click", async () => {
+    await navigator.clipboard.writeText($("draft-body").value);
+    $("draft-copy").textContent = "Copied";
+    setTimeout(() => ($("draft-copy").textContent = "Copy message"), 1500);
+  });
+  $("draft-send").addEventListener("click", () => {
+    const to = $("draft-to").value.trim();
+    if (!to || !$("draft-to").checkValidity()) {
+      $("draft-warn").hidden = false;
+      $("draft-warn").textContent = "Add the business's email address first, or use Copy message and send it another way.";
+      return $("draft-to").focus();
+    }
+    window.location.href = "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent($("draft-subject").value) + "&body=" + encodeURIComponent($("draft-body").value);
+    markContacted();
+    $("draft").close();
   });
 
   $("export-csv").addEventListener("click", exportCsv);
@@ -402,7 +567,7 @@
     const id = "manual/" + Date.now();
     leads[id] = {
       id, name: data.name.trim(), group: "", kind: "", address: data.address.trim(), lat: null, lon: null,
-      website: cleanUrl(data.website), phone: data.phone.trim(), email: "", social: "", hours: true, chain: false,
+      website: cleanUrl(data.website), phone: data.phone.trim(), email: data.email.trim(), social: "", hours: true, chain: false,
       status: "New", notes: "", rating: "", reviews: "", added: Date.now(),
     };
     event.target.reset();

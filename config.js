@@ -12,6 +12,10 @@ window.SITE_CONFIG = {
   //           endpoint). No account is needed until you want this.
   formEndpoint: "",
 
+  // Used by the lead finder when it drafts outreach emails.
+  yourName: "", // e.g. "Alex" -> "I'm Alex, a web developer based in..."
+  siteUrl: "", // your published address, e.g. "https://yourstudio.com". Example links in emails need it.
+
   // Default search location for the lead finder (leads/index.html).
   leadFinderDefaultPlace: "",
 };

@@ -6,6 +6,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Lead finder</title>
   <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="leads.css">
 </head>
 <body>
@@ -50,11 +51,21 @@
         <select id="f-status"><option value="">All stages</option></select>
       </label>
       <label class="check"><input type="checkbox" id="f-noweb"> No website listed</label>
+      <label class="check"><input type="checkbox" id="f-email"> Has email</label>
       <label class="check"><input type="checkbox" id="f-chains" checked> Hide chains</label>
+      <div class="views" role="group" aria-label="View">
+        <button type="button" class="ghost" id="view-list" aria-pressed="true">List</button>
+        <button type="button" class="ghost" id="view-map" aria-pressed="false">Map</button>
+      </div>
       <p id="count"></p>
     </section>
 
-    <div class="table-wrap">
+    <div id="map-wrap" hidden>
+      <div id="map" aria-label="Map of businesses"></div>
+      <p class="legend"><i class="dot hot"></i> Strong opportunity <i class="dot warm"></i> Some gaps <i class="dot cool"></i> Little to offer <i class="dot done"></i> Already contacted</p>
+    </div>
+
+    <div class="table-wrap" id="list-wrap">
       <table>
         <thead>
           <tr>
@@ -88,6 +99,7 @@
       <label>Name <input name="name" required></label>
       <label>Address <input name="address"></label>
       <label>Phone <input name="phone"></label>
+      <label>Email <input name="email" type="email"></label>
       <label>Website <input name="website" placeholder="Leave empty if they have none"></label>
       <div class="dialog-actions">
         <button type="button" class="ghost" id="manual-cancel">Cancel</button>
@@ -96,6 +108,23 @@
     </form>
   </dialog>
 
+  <dialog id="draft">
+    <form method="dialog" id="draft-form">
+      <h2>Email to <span id="draft-name"></span></h2>
+      <p id="draft-warn" class="warn" hidden></p>
+      <label>To <input id="draft-to" type="email" placeholder="No email on record. Paste one here if you find it."></label>
+      <label>Subject <input id="draft-subject"></label>
+      <label>Message <textarea id="draft-body" rows="14"></textarea></label>
+      <p class="fine">Read it before you send, and check the business details are right. Sending marks the business as Contacted.</p>
+      <div class="dialog-actions">
+        <button type="button" class="ghost" id="draft-cancel">Close</button>
+        <button type="button" class="ghost" id="draft-copy">Copy message</button>
+        <button type="button" class="btn small" id="draft-send">Open in my email app</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
   <script src="../config.js"></script>
   <script src="leads.js"></script>
 </body>

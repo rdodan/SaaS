@@ -33,6 +33,15 @@ endpoint (for example Formspree or Web3Forms) and paste its URL into `formEndpoi
 - Searches by town and radius using OpenStreetMap (Nominatim and Overpass). No key, no cost.
 - OpenStreetMap has no review data. Each row links to Google Maps; type the rating and
   review count you see into the row and the score updates.
+- **Map view:** switch between List and Map. Dots are coloured by opportunity and turn grey
+  once you have contacted a business.
+- **Email drafts:** "Draft email" writes a first message built around what that business is
+  missing, with a link to the matching example site. You review it, then it opens in your own
+  email app to send, and the business is marked Contacted. After 7 days it is flagged
+  "Follow-up due" and the button drafts a short follow-up. Set `yourName` and `siteUrl` in
+  `config.js` first.
+- OpenStreetMap only has an email for some businesses. For the rest, "Search for an email"
+  opens a web search, and you can paste what you find into the draft.
 - Your list, stages and notes live in your browser only. Use **Backup** regularly and
   **Restore** to move to another browser or computer.
 - The page is hidden from search engines but is not password protected. It contains
