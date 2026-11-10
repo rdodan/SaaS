@@ -49,6 +49,9 @@ endpoint (for example Formspree or Web3Forms) and paste its URL into `formEndpoi
   made-up businesses with placeholder details. Each is one config file in `templates/sites/`
   holding its colours, fonts, wording and content.
 - **Pick the building blocks per client.** In the config:
+  - `theme.skin`: the overall design language. `cinema` (dark, giant headings), `magazine`
+    (label column beside the content), `brutal` (oversized, sharp, numbered), `classic`
+    (centred and framed) or `friendly` (soft cards and a coloured call to action).
   - `hero.style`: `film` (story that plays as you scroll), `poster` (full-screen headline),
     `split` (words beside a picture) or `bold` (stacked type with a row of figures).
   - `theme.header`: `bar`, `centered` or `pill`. `theme.pattern` sets the placeholder art.

@@ -12,7 +12,7 @@ window.SITE = {
     reviewsUrl: "https://www.google.com/maps",
     instagramUrl: "https://www.instagram.com",
   },
-  theme: { mode: "dark", bg: "#12160f", bg2: "#1a2016", ink: "#f2ecdd", muted: "#a5a892", line: "#2c3425", accent: "#e0763a", accentInk: "#1a120b", filmBg: "#0c0f0a", display: "Fraunces", body: "Karla", serif: true, uppercase: false, radius: "4px", card: "6px", header: "centered", pattern: "grain" },
+  theme: { skin: "magazine", mode: "dark", bg: "#12160f", bg2: "#1a2016", ink: "#f2ecdd", muted: "#a5a892", line: "#2c3425", accent: "#e0763a", accentInk: "#1a120b", filmBg: "#0c0f0a", display: "Fraunces", body: "Karla", serif: true, uppercase: false, radius: "4px", card: "6px", header: "centered", pattern: "grain" },
   hero: {
     style: "poster",
     title: "Restaurant in Your Town",

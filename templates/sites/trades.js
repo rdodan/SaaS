@@ -11,7 +11,7 @@ window.SITE = {
     mapsUrl: "https://www.google.com/maps",
     reviewsUrl: "https://www.google.com/maps",
   },
-  theme: { mode: "light", bg: "#f6f9fc", bg2: "#e9f0f7", ink: "#0d2238", muted: "#55697d", line: "#cfdbe7", accent: "#1166ee", accentInk: "#ffffff", display: "Archivo", body: "Inter", uppercase: false, radius: "12px", card: "20px", header: "pill", pattern: "dots" },
+  theme: { skin: "friendly", mode: "light", bg: "#f6f9fc", bg2: "#e9f0f7", ink: "#0d2238", muted: "#55697d", line: "#cfdbe7", accent: "#1166ee", accentInk: "#ffffff", display: "Archivo", body: "Inter", uppercase: false, radius: "12px", card: "20px", header: "pill", pattern: "dots" },
   hero: {
     style: "split",
     flip: true,

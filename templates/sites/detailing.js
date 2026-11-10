@@ -12,7 +12,7 @@ window.SITE = {
     reviewsUrl: "https://www.google.com/maps",
     instagramUrl: "https://www.instagram.com",
   },
-  theme: { mode: "dark", bg: "#0b0b0d", bg2: "#131316", ink: "#f4f2ee", muted: "#9d9a95", line: "#28282c", accent: "#ff3b4e", accentInk: "#ffffff", display: "Anton", body: "Manrope" },
+  theme: { skin: "cinema", mode: "dark", bg: "#0b0b0d", bg2: "#131316", ink: "#f4f2ee", muted: "#9d9a95", line: "#28282c", accent: "#ff3b4e", accentInk: "#ffffff", display: "Anton", body: "Manrope" },
   film: {
     chapters: [
       { title: "Your car works hard for you." },

@@ -11,7 +11,7 @@ window.SITE = {
     mapsUrl: "https://www.google.com/maps",
     instagramUrl: "https://www.instagram.com",
   },
-  theme: { mode: "dark", bg: "#0a0a0a", bg2: "#141414", ink: "#f5f5f0", muted: "#9a9a92", line: "#2a2a2a", accent: "#d7ff3e", accentInk: "#0a0a0a", filmBg: "#050505", display: "Bebas Neue", body: "Barlow", radius: "0px", card: "0px", pattern: "stripes" },
+  theme: { skin: "brutal", mode: "dark", bg: "#0a0a0a", bg2: "#141414", ink: "#f5f5f0", muted: "#9a9a92", line: "#2a2a2a", accent: "#d7ff3e", accentInk: "#0a0a0a", filmBg: "#050505", display: "Bebas Neue", body: "Barlow", radius: "0px", card: "0px", pattern: "stripes" },
   hero: {
     style: "bold",
     title: "Gym in Your Town",

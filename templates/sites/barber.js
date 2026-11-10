@@ -12,7 +12,7 @@ window.SITE = {
     reviewsUrl: "https://www.google.com/maps",
     instagramUrl: "https://www.instagram.com",
   },
-  theme: { mode: "light", bg: "#f5efe6", bg2: "#ebe3d6", ink: "#221a15", muted: "#6f6258", line: "#d6cab8", accent: "#8c2f1b", accentInk: "#ffffff", display: "DM Serif Display", body: "DM Sans", serif: true, uppercase: false, radius: "8px", card: "10px", header: "centered", pattern: "dots" },
+  theme: { skin: "classic", mode: "light", bg: "#f5efe6", bg2: "#ebe3d6", ink: "#221a15", muted: "#6f6258", line: "#d6cab8", accent: "#8c2f1b", accentInk: "#ffffff", display: "DM Serif Display", body: "DM Sans", serif: true, uppercase: false, radius: "8px", card: "10px", header: "centered", pattern: "dots" },
   hero: {
     style: "split",
     title: "Barbershop in Your Town",

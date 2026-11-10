@@ -546,7 +546,7 @@ ${b.phone ? `
     const sections = { beforeAfter, services, menu, plans, timetable, process, work, team, areas, hours, faq, quote };
     const hero = { film, split: heroSplit, poster: heroPoster, bold: heroBold }[heroStyle(site)];
     return (
-      `<div class="site open-${heroStyle(site)} header-${pick(t.header, ["bar", "centered", "pill"])} pattern-${pick(t.pattern, ["shine", "stripes", "dots", "grain"])}">` +
+      `<div class="site open-${heroStyle(site)} header-${pick(t.header, ["bar", "centered", "pill"])} pattern-${pick(t.pattern, ["shine", "stripes", "dots", "grain"])} skin-${pick(t.skin, ["cinema", "magazine", "brutal", "classic", "friendly"])}">` +
       header(site) +
       `<main id="main">` +
       hero(site) +
