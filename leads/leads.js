@@ -529,6 +529,20 @@
     }
   }
 
+  let toastTimer;
+  function undoToast(text, undo) {
+    const toast = $("toast");
+    const button = el("button", { type: "button", className: "ghost", textContent: "Undo" });
+    button.addEventListener("click", () => {
+      undo();
+      toast.hidden = true;
+    });
+    toast.replaceChildren(el("span", { textContent: text }), button);
+    toast.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => (toast.hidden = true), 10000);
+  }
+
   // ---------- wiring ----------
 
   GROUPS.forEach((group) => {
@@ -582,6 +596,12 @@
       lead.siteFound = !lead.siteFound;
       save();
       render();
+      // The row may drop down the list or out of the current filter, so offer a way back.
+      undoToast(lead.siteFound ? `Marked "${lead.name}" as having a website.` : `"${lead.name}" is back to no website.`, () => {
+        lead.siteFound = !lead.siteFound;
+        save();
+        render();
+      });
     }
   });
   $("draft-cancel").addEventListener("click", () => $("draft").close());
