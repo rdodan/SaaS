@@ -25,12 +25,13 @@
       <label class="grow">Town, city or postcode
         <input id="place" placeholder="e.g. Leeds, UK" required>
       </label>
-      <label>Radius
+      <label>Range
         <select id="radius">
-          <option value="1000">1 km</option>
-          <option value="2000" selected>2 km</option>
-          <option value="5000">5 km</option>
-          <option value="10000">10 km</option>
+          <option value="10" selected>10 miles</option>
+          <option value="25">25 miles</option>
+          <option value="50">50 miles</option>
+          <option value="100">100 miles</option>
+          <option value="200">200 miles</option>
         </select>
       </label>
       <button class="btn" type="submit" id="go">Find businesses</button>

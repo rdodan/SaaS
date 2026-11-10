@@ -30,7 +30,7 @@ endpoint (for example Formspree or Web3Forms) and paste its URL into `formEndpoi
 
 ## Lead finder
 
-- Searches by town and radius using OpenStreetMap (Nominatim and Overpass). No key, no cost.
+- Searches by town and range (10 to 200 miles) using OpenStreetMap (Nominatim and Overpass). No key, no cost.
 - OpenStreetMap has no review data. Each row links to Google Maps; type the rating and
   review count you see into the row and the score updates.
 - **Map view:** switch between List and Map. Dots are coloured by opportunity and turn grey
@@ -47,7 +47,7 @@ endpoint (for example Formspree or Web3Forms) and paste its URL into `formEndpoi
 - The page is hidden from search engines but is not password protected. It contains
   no data of its own, so anyone opening it sees an empty tool.
 - The public OpenStreetMap servers are shared and rate limited. If a search says the
-  server is busy, wait a minute or use a smaller radius.
+  server is busy, wait a minute, or use a smaller range or fewer business types.
 
 ## Client-site templates and catalog
 

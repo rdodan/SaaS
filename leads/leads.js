@@ -68,16 +68,21 @@
     return GROUPS.find((group) => matches(tags, group));
   }
 
-  function buildQuery(lat, lon, radius, groupIds) {
-    const around = `(around:${radius},${lat},${lon})`;
+  // Above this range only businesses with no website are fetched, to keep the amount of data manageable.
+  const WIDE_MILES = 25;
+  const MAX_RESULTS = 3000;
+
+  function buildQuery(lat, lon, miles, groupIds) {
+    const around = `(around:${Math.round(miles * 1609.344)},${lat},${lon})`;
+    const noSite = miles >= WIDE_MILES ? '[!"website"][!"contact:website"]' : "";
     const clauses = [];
     GROUPS.filter((g) => groupIds.includes(g.id)).forEach((group) => {
       Object.entries(group.tags).forEach(([key, values]) => {
         const filter = values === "*" ? `["${key}"]` : `["${key}"~"^(${values})$"]`;
-        clauses.push(`nwr["name"]${filter}${around};`);
+        clauses.push(`nwr["name"]${filter}${noSite}${around};`);
       });
     });
-    return `[out:json][timeout:60];(${clauses.join("")});out center tags;`;
+    return `[out:json][timeout:180][maxsize:536870912];(${clauses.join("")});out center tags ${MAX_RESULTS};`;
   }
 
   async function geocode(place) {
@@ -109,7 +114,7 @@
         lastError = err;
       }
     }
-    throw new Error("The OpenStreetMap server is busy (" + lastError.message + "). Wait a minute, or try a smaller radius.");
+    throw new Error("The OpenStreetMap server is busy or the search was too large (" + lastError.message + "). Wait a minute, or try a smaller range or fewer business types.");
   }
 
   function cleanUrl(raw) {
@@ -418,8 +423,9 @@
       localStorage.setItem(STORE_KEY + ".place", place);
       setStatus("Looking up " + place + "...");
       const spot = await geocode(place);
-      setStatus("Finding businesses near " + spot.label + "...");
-      const elements = await overpass(buildQuery(spot.lat, spot.lon, $("radius").value, groupIds));
+      const miles = Number($("radius").value);
+      setStatus(`Finding businesses within ${miles} miles of ${spot.label}...` + (miles >= WIDE_MILES ? " A wide range can take a minute or two." : ""));
+      const elements = await overpass(buildQuery(spot.lat, spot.lon, miles, groupIds));
 
       let added = 0;
       let kept = 0;
@@ -436,7 +442,9 @@
       save();
       shown = PAGE;
       render();
-      setStatus(`Found ${kept} businesses near ${spot.label}. ${added} of them are new to your list.`);
+      setStatus(`Found ${kept} businesses within ${miles} miles of ${spot.label}. ${added} of them are new to your list.` +
+          (miles >= WIDE_MILES ? " At this range only businesses with no website listed are fetched." : "") +
+          (elements.length >= MAX_RESULTS ? ` That is the limit of ${MAX_RESULTS} per search, so there are more: choose fewer business types or a smaller range to see the rest.` : ""));
     } catch (err) {
       setStatus(err.message, true);
     } finally {
