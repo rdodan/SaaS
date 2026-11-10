@@ -83,8 +83,18 @@
       <p id="empty" class="empty">
         No businesses yet. Search a place above, and they will be saved in this browser so you can work through them.
       </p>
-      <button type="button" class="ghost" id="more" hidden>Show more</button>
     </div>
+    <nav class="pager" id="pager" aria-label="Pages" hidden>
+      <label>Per page
+        <select id="page-size">
+          <option>10</option>
+          <option selected>25</option>
+          <option>50</option>
+          <option>100</option>
+        </select>
+      </label>
+      <div class="pages" id="pages"></div>
+    </nav>
 
     <p class="fine">
       Business data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>.

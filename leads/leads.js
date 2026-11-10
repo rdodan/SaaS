@@ -2,7 +2,6 @@
   "use strict";
 
   const STORE_KEY = "leadfinder.v1";
-  const PAGE = 200;
   const OVERPASS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.private.coffee/api/interpreter",
@@ -30,7 +29,8 @@
 
   const $ = (id) => document.getElementById(id);
   let leads = load();
-  let shown = PAGE;
+  let page = 1;
+  let pageSize = Number(localStorage.getItem(STORE_KEY + ".pageSize")) || 25;
 
   // ---------- storage ----------
 
@@ -353,10 +353,13 @@
   function render() {
     const list = visible();
     const total = Object.keys(leads).length;
-    $("rows").replaceChildren(...list.slice(0, shown).map(row));
+    const pages = Math.max(1, Math.ceil(list.length / pageSize));
+    page = Math.min(Math.max(1, page), pages);
+    const first = (page - 1) * pageSize;
+    $("rows").replaceChildren(...list.slice(first, first + pageSize).map(row));
+    drawPager(pages, list.length);
     $("empty").hidden = total > 0;
-    $("more").hidden = list.length <= shown;
-    $("count").textContent = total ? `Showing ${Math.min(shown, list.length)} of ${list.length} matching (${total} saved), best opportunities first.` : "";
+    $("count").textContent = total ? (list.length ? `Showing ${first + 1} to ${Math.min(first + pageSize, list.length)} of ${list.length} matching` : "Nothing matches these filters") + ` (${total} saved), best opportunities first.` : "";
     if (!$("map-wrap").hidden) drawMap(list);
   }
 
@@ -408,7 +411,30 @@
     $("list-wrap").hidden = showMap;
     $("view-map").setAttribute("aria-pressed", String(showMap));
     $("view-list").setAttribute("aria-pressed", String(!showMap));
-    if (showMap) drawMap(visible());
+    render();
+  }
+
+  // Page buttons: first, last, and the pages around the current one.
+  function drawPager(pages, count) {
+    $("pager").hidden = count <= 10 || !$("map-wrap").hidden;
+    const box = $("pages");
+    const button = (label, target, opts) => {
+      const b = el("button", { type: "button", className: "ghost", textContent: label, disabled: Boolean(opts && opts.disabled) });
+      if (opts && opts.current) b.setAttribute("aria-current", "page");
+      if (opts && opts.name) b.setAttribute("aria-label", opts.name);
+      b.dataset.page = target;
+      return b;
+    };
+    const items = [button("\u2039 Prev", page - 1, { disabled: page === 1, name: "Previous page" })];
+    let last = 0;
+    for (let n = 1; n <= pages; n += 1) {
+      if (n !== 1 && n !== pages && Math.abs(n - page) > 1) continue;
+      if (n - last > 1) items.push(el("span", { textContent: "\u2026" }));
+      items.push(button(String(n), n, { current: n === page, name: "Page " + n }));
+      last = n;
+    }
+    items.push(button("Next \u203a", page + 1, { disabled: page === pages, name: "Next page" }));
+    box.replaceChildren(...items);
   }
 
   function setStatus(text, isError) {
@@ -447,7 +473,7 @@
         leads[fresh.id] = Object.assign({ status: "New", notes: "", rating: "", reviews: "", added: Date.now() }, leads[fresh.id], fresh);
       });
       save();
-      shown = PAGE;
+      page = 1;
       render();
       setStatus(`Found ${kept} businesses within ${miles} miles of ${spot.label}. ${added} of them are new to your list.` +
           (miles >= WIDE_MILES ? " At this range only businesses with no website listed are fetched." : "") +
@@ -517,13 +543,23 @@
   $("search").addEventListener("submit", search);
   ["q", "f-group", "f-status", "f-noweb", "f-chains", "f-email"].forEach((id) =>
     $(id).addEventListener("input", () => {
-      shown = PAGE;
+      page = 1;
       render();
     })
   );
-  $("more").addEventListener("click", () => {
-    shown += PAGE;
+  $("page-size").value = String(pageSize);
+  $("page-size").addEventListener("change", () => {
+    pageSize = Number($("page-size").value);
+    localStorage.setItem(STORE_KEY + ".pageSize", pageSize);
+    page = 1;
     render();
+  });
+  $("pages").addEventListener("click", (event) => {
+    const target = Number(event.target.dataset.page);
+    if (!target || event.target.disabled) return;
+    page = target;
+    render();
+    $("list-wrap").scrollIntoView({ block: "start" });
   });
 
   // Edits inside the table: save as you type, refresh the gaps when a rating changes.
