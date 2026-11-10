@@ -21,7 +21,7 @@
   // Scroll animations. Skipped entirely on browsers without IntersectionObserver.
   if ("IntersectionObserver" in window) {
     document.documentElement.classList.add("js");
-    const groups = [".hero-copy > *", ".scorecard", ".band > h2", ".card", ".steps li", ".faq details", ".contact > *"];
+    const groups = [".hero-copy > *:not(h1)", ".scorecard", ".band > h2", ".how-head", ".card", ".faq details", ".contact > *"];
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -45,6 +45,59 @@
     });
     document.querySelectorAll(".scorecard li").forEach((li, i) => li.style.setProperty("--i", i));
 
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    // Headline: wrap each word so it can rise into place. Screen readers get the plain text.
+    const h1 = document.querySelector("h1");
+    const words = h1.textContent.trim().split(/\s+/);
+    h1.setAttribute("aria-label", words.join(" "));
+    h1.replaceChildren();
+    words.forEach((word, i) => {
+      const inner = document.createElement("span");
+      inner.textContent = word;
+      inner.style.setProperty("--i", i);
+      const outer = document.createElement("span");
+      outer.className = "w";
+      outer.setAttribute("aria-hidden", "true");
+      outer.append(inner);
+      h1.append(outer, " ");
+    });
+    requestAnimationFrame(() => requestAnimationFrame(() => h1.classList.add("in")));
+
+    // Marquee: repeat the items so the loop is seamless at any screen width.
+    const track = document.querySelector(".marquee-track");
+    const items = [...track.children];
+    for (let n = 0; n < 3; n += 1) items.forEach((item) => track.append(item.cloneNode(true)));
+
+    if (finePointer && !calm) {
+      // Example audit card leans towards the pointer.
+      const hero = document.querySelector(".hero");
+      const scorecard = document.querySelector(".scorecard");
+      hero.addEventListener("pointermove", (event) => {
+        const box = scorecard.getBoundingClientRect();
+        const x = (event.clientX - (box.left + box.width / 2)) / window.innerWidth;
+        const y = (event.clientY - (box.top + box.height / 2)) / window.innerHeight;
+        scorecard.style.setProperty("--ry", (x * 14).toFixed(2) + "deg");
+        scorecard.style.setProperty("--rx", (-y * 14).toFixed(2) + "deg");
+      });
+      hero.addEventListener("pointerleave", () => {
+        scorecard.style.setProperty("--ry", "0deg");
+        scorecard.style.setProperty("--rx", "0deg");
+      });
+      // Service cards: light follows the pointer.
+      document.querySelectorAll(".card").forEach((card) => {
+        card.addEventListener("pointermove", (event) => {
+          const box = card.getBoundingClientRect();
+          card.style.setProperty("--mx", event.clientX - box.left + "px");
+          card.style.setProperty("--my", event.clientY - box.top + "px");
+        });
+      });
+    }
+
+    const steps = document.querySelector(".steps");
+    const stepItems = [...steps.children];
+    const cta = document.querySelector(".cta");
     const top = document.querySelector(".top");
     const bar = document.querySelector(".progress");
     let ticking = false;
@@ -53,6 +106,18 @@
       bar.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
       top.classList.toggle("scrolled", window.scrollY > 8);
       document.documentElement.style.setProperty("--scroll", Math.min(window.scrollY, 800));
+
+      // Timeline: the rail fills, and each step lights up, as it passes mid-screen.
+      const line = window.innerHeight * 0.6;
+      const rail = steps.getBoundingClientRect();
+      const fill = calm ? 1 : Math.max(0, Math.min(1, (line - rail.top) / rail.height));
+      steps.style.setProperty("--fill", fill);
+      stepItems.forEach((li) => li.classList.toggle("active", calm || li.getBoundingClientRect().top < line));
+
+      // Call to action: starts as an inset rounded panel and opens to full width.
+      const enter = calm ? 1 : Math.max(0, Math.min(1, (window.innerHeight - cta.getBoundingClientRect().top) / (window.innerHeight * 0.6)));
+      cta.style.setProperty("--inset", ((1 - enter) * 6).toFixed(2) + "%");
+      cta.style.setProperty("--round", ((1 - enter) * 28).toFixed(1) + "px");
       ticking = false;
     };
     window.addEventListener("scroll", () => {
