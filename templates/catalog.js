@@ -25,7 +25,7 @@
   }
 
   function card(name, site) {
-    const href = "site/?site=" + name;
+    const href = "site/index.html?site=" + name;
     const meta = site.catalog || {};
     const theme = site.theme || {};
     const frame = el("iframe", { src: href, title: site.business.name + " preview", loading: "lazy", tabIndex: -1 });

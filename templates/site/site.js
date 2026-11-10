@@ -403,6 +403,6 @@
   script.onerror = fail;
   document.head.append(script);
   function fail() {
-    $("#app").innerHTML = '<p style="padding:2rem;font-family:sans-serif">No site config found for "' + name + '". <a href="../">Back to the catalog</a></p>';
+    $("#app").innerHTML = '<p style="padding:2rem;font-family:sans-serif">No site config found for "' + name + '". <a href="../index.html">Back to the catalog</a></p>';
   }
 })();

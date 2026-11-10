@@ -55,7 +55,7 @@ endpoint (for example Formspree or Web3Forms) and paste its URL into `formEndpoi
 ### New client site
 
 1. Copy the closest example in `templates/sites/` to `templates/sites/<client>.js` and edit it.
-2. Preview at `templates/site/?site=<client>`.
+2. Preview at `templates/site/index.html?site=<client>`.
 3. Add photos by setting `image`, `before` and `after` paths in the config. Until then, coloured placeholders are shown.
 4. Export a static site to upload to any host (needs Node.js):
 
