@@ -18,6 +18,48 @@
   document.getElementById("year").textContent = new Date().getFullYear();
   if (cfg.name) document.title = cfg.name + " | " + document.title;
 
+  // Scroll animations. Skipped entirely on browsers without IntersectionObserver.
+  if ("IntersectionObserver" in window) {
+    document.documentElement.classList.add("js");
+    const groups = [".hero-copy > *", ".scorecard", ".band > h2", ".card", ".steps li", ".faq details", ".contact > *"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("in");
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+    );
+    groups.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((el) => {
+        // Stagger siblings so a row of cards arrives one after another.
+        const index = [...el.parentElement.children].indexOf(el);
+        el.style.setProperty("--delay", Math.min(index, 5) * 90 + "ms");
+        el.classList.add("reveal");
+        observer.observe(el);
+      });
+    });
+    document.querySelectorAll(".scorecard li").forEach((li, i) => li.style.setProperty("--i", i));
+
+    const top = document.querySelector(".top");
+    const bar = document.querySelector(".progress");
+    let ticking = false;
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
+      top.classList.toggle("scrolled", window.scrollY > 8);
+      document.documentElement.style.setProperty("--scroll", Math.min(window.scrollY, 800));
+      ticking = false;
+    };
+    window.addEventListener("scroll", () => {
+      if (!ticking) requestAnimationFrame(onScroll);
+      ticking = true;
+    }, { passive: true });
+    onScroll();
+  }
+
   const form = document.getElementById("contact-form");
   const status = document.getElementById("form-status");
 
