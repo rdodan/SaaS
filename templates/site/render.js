@@ -49,6 +49,7 @@
       "--case:" + (t.uppercase === false ? "none" : "uppercase") + ";" +
       "--tight:" + (t.uppercase === false ? "1.05" : "0.92") + ";" +
       "--radius:" + (/^\d{1,3}px$/.test(t.radius || "") ? t.radius : "999px") + ";" +
+      "--card:" + (/^\d{1,2}px$/.test(t.card || "") ? t.card : "18px") + ";" +
       "color-scheme:" + (t.mode === "light" ? "light" : "dark") + "}"
     );
   }
@@ -69,25 +70,101 @@
     return `<span class="logo">${esc(parts[0])}${parts[1] ? `<b>${esc(parts[1])}</b>` : ""}</span>`;
   }
 
+  const NAV = { services: "Services", menu: "Menu", plans: "Membership", timetable: "Classes", process: "Process", work: "Gallery", team: "Team", areas: "Areas", hours: "Visit", faq: "FAQ" };
+  const ORDER = ["beforeAfter", "services", "menu", "plans", "timetable", "process", "work", "team", "areas", "hours", "faq", "quote"];
+  const order = (site) => (site.order || ORDER).filter((key) => site[key]);
+  const heroStyle = (site) => ["film", "split", "poster", "bold"].find((x) => x === (site.hero && site.hero.style)) || "film";
+
   function header(site) {
     const b = site.business;
-    const links = [
-      site.services && ["Services", "#services"],
-      site.process && ["Process", "#process"],
-      site.work && ["Work", "#work"],
-      site.areas && ["Areas", "#areas"],
-      site.faq && ["FAQ", "#faq"],
-    ].filter(Boolean);
+    const links = order(site).filter((key) => NAV[key]).slice(0, 6);
     return `
 <a class="skip" href="#main">Skip to content</a>
-<header class="bar">
-  <a href="#top" aria-label="${esc(b.name)} home">${logo(b)}</a>
-  <nav aria-label="Main">${list(links, (l) => `<a href="${l[1]}">${l[0]}</a>`)}</nav>
+<header class="bar${heroStyle(site) === "split" ? "" : " over-dark"}">
+  <a class="bar-logo" href="#top" aria-label="${esc(b.name)} home">${logo(b)}</a>
+  <nav aria-label="Main">${list(links, (key) => `<a href="#${key}">${esc((site[key].nav) || NAV[key])}</a>`)}</nav>
   <div class="bar-cta">
     ${b.phone ? `<a class="phone" data-phone href="tel:${esc(digits(b.phone))}">${esc(b.phone)}</a>` : ""}
     <a class="btn" href="#quote">${esc((site.quote && site.quote.cta) || "Get a quote")}</a>
   </div>
 </header>`;
+  }
+
+  // ---------- openings ----------
+
+  const art = (src, alt) => (src ? `<img src="${url(src)}" alt="${esc(alt || "")}">` : `<div class="ph" aria-hidden="true"></div>`);
+
+  function heroTitle(hero, b, outline) {
+    const lines = [].concat(hero.lines || hero.title || b.name);
+    return `<h1 class="title">${hero.lines && hero.title ? `<span class="kicker">${esc(hero.title)}</span>` : ""}${lines
+      .map((line, i) => `<span class="line${outline && i % 2 ? " outline" : i === lines.length - 1 && lines.length > 1 ? " accent" : ""}">${esc(line)}</span>`)
+      .join(" ")}</h1>`;
+  }
+
+  function heroCtas(site) {
+    const b = site.business;
+    const hero = site.hero || {};
+    return `<div class="hero-ctas">
+      <a class="btn large" href="#quote">${esc(hero.cta || "Get a quote")}</a>
+      ${b.phone ? `<a class="btn large ghost" data-phone href="tel:${esc(digits(b.phone))}">${esc(hero.phoneLabel || "Call")} ${esc(b.phone)}</a>` : ""}
+    </div>`;
+  }
+
+  function marquee(items) {
+    if (!items || !items.length) return "";
+    return `<div class="marquee" aria-hidden="true"><div class="marquee-track">${list(items, (x) => `<span>${esc(x)}</span>`)}</div></div>`;
+  }
+
+  // Side-by-side opening: words on one side, a picture and a small card on the other.
+  function heroSplit(site) {
+    const b = site.business;
+    const hero = site.hero || {};
+    const card = site.hours
+      ? `<div class="float-card"><p class="open-badge" data-open-badge>Opening hours</p><p data-open-today></p></div>`
+      : hero.card ? `<div class="float-card"><p class="open-badge on">${esc(hero.card.title)}</p><p>${esc(hero.card.text)}</p></div>` : "";
+    return `
+<section id="top" class="hero-split${hero.flip ? " flip" : ""}">
+  <div class="hs-copy lines reveal">
+    ${heroTitle(hero, b)}
+    ${hero.text ? `<p class="lede">${esc(hero.text)}</p>` : ""}
+    ${heroCtas(site)}
+    ${hero.points ? `<ul class="points">${list(hero.points, (x) => `<li>${esc(x)}</li>`)}</ul>` : ""}
+  </div>
+  <div class="hs-visual reveal"><div class="hs-frame" data-parallax>${art(hero.image, b.name)}</div>${card}</div>
+</section>${marquee(hero.marquee)}`;
+  }
+
+  // Full-screen opening with a centred headline over a picture.
+  function heroPoster(site) {
+    const b = site.business;
+    const hero = site.hero || {};
+    return `
+<section id="top" class="hero-poster">
+  <div class="hp-bg" data-parallax>${art(hero.image, "")}</div>
+  <div class="hp-inner lines reveal">
+    ${b.tagline ? `<p class="hp-tag">${esc(b.tagline)}</p>` : ""}
+    ${heroTitle(hero, b)}
+    ${hero.text ? `<p class="lede">${esc(hero.text)}</p>` : ""}
+    ${heroCtas(site)}
+  </div>
+  <p class="scroll-cue"><span>Scroll</span><i aria-hidden="true"></i></p>
+</section>${marquee(hero.marquee)}`;
+  }
+
+  // Loud opening: stacked solid and outlined type, a moving stripe and a row of figures.
+  function heroBold(site) {
+    const b = site.business;
+    const hero = site.hero || {};
+    return `
+<section id="top" class="hero-bold">
+  <div class="hb-stripe" aria-hidden="true"></div>
+  <div class="hb-inner lines reveal">
+    ${heroTitle(hero, b, true)}
+    ${hero.text ? `<p class="lede">${esc(hero.text)}</p>` : ""}
+    ${heroCtas(site)}
+  </div>
+  ${hero.stats ? `<dl class="hb-stats reveal">${list(hero.stats, (x) => `<div><dt>${esc(x.value)}</dt><dd>${esc(x.label)}</dd></div>`)}</dl>` : ""}
+</section>${marquee(hero.marquee)}`;
   }
 
   function film(site) {
@@ -125,7 +202,7 @@
     <a class="film-skip" href="#after-film">Skip intro</a>
   </div>
 </section>
-<div id="after-film"></div>`;
+<div id="after-film"></div>${marquee((site.hero || {}).marquee)}`;
   }
 
   function beforeAfter(s) {
@@ -147,9 +224,40 @@
   function services(s, site) {
     if (!s) return "";
     const b = site.business;
+    const head = `<div class="sec-head reveal">${title("h2", s.kicker, s.title)}${s.text ? `<p class="lede">${esc(s.text)}</p>` : ""}</div>`;
+
+    // A simple price list: name, dotted line, price.
+    if (s.layout === "list") {
+      return `
+<section class="sec" id="services">
+  <div class="split-2">${head}
+  <ul class="pricelist reveal">
+    ${list(s.items, (item) => `<li><div class="pl-top"><h3>${esc(item.name)}</h3><i></i><span>${esc(item.price || "")}</span></div>${item.text ? `<p>${esc(item.text)}</p>` : ""}</li>`)}
+  </ul></div>
+</section>`;
+    }
+
+    // A grid of cards, one per service.
+    if (s.layout === "cards") {
+      return `
+<section class="sec" id="services">
+  ${head}
+  <div class="svc-grid">
+    ${list(s.items, (item, i) => `
+    <article class="svc reveal" style="--i:${i}">
+      <span class="svc-n">${String(i + 1).padStart(2, "0")}</span>
+      <h3>${esc(item.name)}</h3>
+      <p>${esc(item.text)}</p>
+      ${list(item.groups, (g) => `<ul>${list(g.items, (x) => `<li>${esc(x)}</li>`)}</ul>`)}
+      <a class="svc-link" href="#quote" data-pick="${esc(item.name)}">Get a quote <span aria-hidden="true">&rarr;</span></a>
+    </article>`)}
+  </div>
+</section>`;
+    }
+
     return `
 <section class="sec" id="services">
-  <div class="sec-head reveal">${title("h2", s.kicker, s.title)}</div>
+  ${head}
   ${list(s.items, (item, i) => `
   <article class="pack reveal">
     <div class="pack-main">
@@ -170,6 +278,113 @@
       </details>` : ""}
     </div>
   </article>`)}
+</section>`;
+  }
+
+  // ---------- menu, plans, timetable, team, hours ----------
+
+  const DIET = { v: "Vegetarian", vg: "Vegan", gf: "Gluten free", s: "Spicy" };
+
+  function tabs(id, groups, panel) {
+    return `
+  <div class="tabs reveal" data-tabs="${id}">
+    <div class="tab-list" role="tablist">${list(groups, (g, i) => `<button type="button" role="tab" data-tab="${i}" aria-selected="${i === 0}">${esc(g.name || g.day)}</button>`)}</div>
+    ${list(groups, (g, i) => `<div class="tab-panel" role="tabpanel" data-panel="${i}" data-name="${esc(g.name || g.day)}"><h3 class="tab-title">${esc(g.name || g.day)}</h3>${panel(g)}</div>`)}
+  </div>`;
+  }
+
+  function menu(s) {
+    if (!s) return "";
+    const used = Object.keys(DIET).filter((tag) => s.categories.some((c) => c.items.some((item) => (item.tags || []).includes(tag))));
+    return `
+<section class="sec" id="menu">
+  <div class="sec-head split reveal">
+    <div>${title("h2", s.kicker, s.title)}${s.text ? `<p class="lede">${esc(s.text)}</p>` : ""}</div>
+    ${used.length ? `<div class="chips diet" role="group" aria-label="Show dishes that are">${list(used, (tag) => `<button type="button" class="btn ghost" data-diet="${tag}" aria-pressed="false">${DIET[tag]}</button>`)}</div>` : ""}
+  </div>
+  ${tabs("menu", s.categories, (c) => `
+    ${c.note ? `<p class="tab-note">${esc(c.note)}</p>` : ""}
+    <ul class="dishes">
+      ${list(c.items, (item) => `
+      <li data-tags="${esc((item.tags || []).join(" "))}">
+        <div class="pl-top"><h4>${esc(item.name)}</h4><i></i><span>${esc(item.price || "")}</span></div>
+        ${item.text ? `<p>${esc(item.text)}</p>` : ""}
+        ${(item.tags || []).length ? `<p class="tags">${list(item.tags, (tag) => (DIET[tag] ? `<span>${DIET[tag]}</span>` : ""))}</p>` : ""}
+      </li>`)}
+    </ul>`)}
+  ${s.note ? `<p class="fineprint reveal">${esc(s.note)}</p>` : ""}
+</section>`;
+  }
+
+  function plans(s) {
+    if (!s) return "";
+    return `
+<section class="sec alt" id="plans">
+  <div class="sec-head reveal">${title("h2", s.kicker, s.title)}${s.text ? `<p class="lede">${esc(s.text)}</p>` : ""}</div>
+  <div class="plans">
+    ${list(s.items, (p, i) => `
+    <article class="plan reveal${p.featured ? " featured" : ""}" style="--i:${i}">
+      ${p.featured ? `<span class="badge">${esc(p.badge || "Most popular")}</span>` : ""}
+      <h3>${esc(p.name)}</h3>
+      <p class="plan-price">${esc(p.price)}<small>${esc(p.per || "")}</small></p>
+      ${p.text ? `<p class="plan-text">${esc(p.text)}</p>` : ""}
+      <ul>${list(p.features, (x) => `<li>${esc(x)}</li>`)}</ul>
+      <a class="btn${p.featured ? "" : " ghost"}" href="#quote" data-pick="${esc(p.name)}">${esc(s.cta || "Choose")}</a>
+    </article>`)}
+  </div>
+  ${s.note ? `<p class="fineprint reveal">${esc(s.note)}</p>` : ""}
+</section>`;
+  }
+
+  function timetable(s) {
+    if (!s) return "";
+    return `
+<section class="sec" id="timetable">
+  <div class="sec-head reveal">${title("h2", s.kicker, s.title)}${s.text ? `<p class="lede">${esc(s.text)}</p>` : ""}</div>
+  ${tabs("days", s.days, (d) => `
+    <ul class="classes">
+      ${list(d.classes, (c) => `<li><span class="c-time">${esc(c.time)}</span><span class="c-name">${esc(c.name)}</span><span class="c-meta">${esc([c.length, c.coach].filter(Boolean).join(" · "))}</span></li>`)}
+    </ul>`)}
+</section>`;
+  }
+
+  function team(s) {
+    if (!s) return "";
+    return `
+<section class="sec alt" id="team">
+  <div class="sec-head reveal">${title("h2", s.kicker, s.title)}</div>
+  <div class="team">
+    ${list(s.people, (p, i) => `
+    <figure class="reveal" style="--i:${i}">
+      ${p.image ? `<img src="${url(p.image)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="ph avatar" aria-hidden="true">${esc(p.name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2))}</div>`}
+      <figcaption><b>${esc(p.name)}</b><span>${esc(p.role)}</span></figcaption>
+    </figure>`)}
+  </div>
+</section>`;
+  }
+
+  function hours(s, site) {
+    if (!s) return "";
+    const b = site.business;
+    return `
+<section class="sec alt" id="hours">
+  <div class="split-2">
+    <div class="sec-head reveal">
+      ${title("h2", s.kicker, s.title)}
+      <p class="open-badge" data-open-badge>Opening hours</p>
+      ${b.address ? `<p class="lede">${esc(b.address)}</p>` : ""}
+      <div class="pack-actions">
+        ${b.mapsUrl ? `<a class="btn" href="${url(b.mapsUrl)}" target="_blank" rel="noopener">Directions</a>` : ""}
+        ${b.phone ? `<a class="btn ghost" data-phone href="tel:${esc(digits(b.phone))}">${esc(b.phone)}</a>` : ""}
+      </div>
+    </div>
+    <table class="hours reveal">
+      <tbody>
+        ${list(s.days, (d, i) => `<tr data-day="${i}"><th scope="row">${esc(d.day)}</th><td>${d.closed ? "Closed" : esc(d.open) + " to " + esc(d.close)}</td></tr>`)}
+      </tbody>
+      ${s.note ? `<caption>${esc(s.note)}</caption>` : ""}
+    </table>
+  </div>
 </section>`;
   }
 
@@ -326,20 +541,20 @@ ${b.phone ? `
   }
 
   function render(site) {
+    const t = site.theme || {};
+    const pick = (value, allowed) => (allowed.includes(value) ? value : allowed[0]);
+    const sections = { beforeAfter, services, menu, plans, timetable, process, work, team, areas, hours, faq, quote };
+    const hero = { film, split: heroSplit, poster: heroPoster, bold: heroBold }[heroStyle(site)];
     return (
+      `<div class="site open-${heroStyle(site)} header-${pick(t.header, ["bar", "centered", "pill"])} pattern-${pick(t.pattern, ["shine", "stripes", "dots", "grain"])}">` +
       header(site) +
       `<main id="main">` +
-      film(site) +
-      beforeAfter(site.beforeAfter) +
-      services(site.services, site) +
-      process(site.process) +
-      work(site.work, site) +
-      areas(site.areas, site) +
-      faq(site.faq) +
-      quote(site.quote, site) +
+      hero(site) +
+      order(site).map((key) => sections[key](site[key], site)).join("") +
       `</main>` +
       footer(site) +
-      extras(site)
+      extras(site) +
+      `</div>`
     );
   }
 

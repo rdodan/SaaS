@@ -45,12 +45,20 @@ endpoint (for example Formspree or Web3Forms) and paste its URL into `formEndpoi
 `templates/` holds a reusable site for client businesses and a catalog page to show prospects.
 
 - **Catalog:** open `templates/index.html`. It previews every example and is linked from the agency site as "Examples".
-- **One template, many looks:** each business is a single config file in `templates/sites/` holding its
-  colours, fonts, wording, services, towns, questions and quote steps. The three examples
-  (`detailing`, `barber`, `trades`) are made-up businesses with placeholder details.
-- **What every site includes:** a scroll-through opening, before/after slider, service packages,
-  process steps, photo gallery, town checker, FAQ, multi-step quote form, scripted chat, and a
-  Call / Text / Quote bar on phones. Leave a section out of the config and it is not shown.
+- **Five examples, five layouts:** `restaurant`, `gym`, `detailing`, `barber` and `trades`. They are
+  made-up businesses with placeholder details. Each is one config file in `templates/sites/`
+  holding its colours, fonts, wording and content.
+- **Pick the building blocks per client.** In the config:
+  - `hero.style`: `film` (story that plays as you scroll), `poster` (full-screen headline),
+    `split` (words beside a picture) or `bold` (stacked type with a row of figures).
+  - `theme.header`: `bar`, `centered` or `pill`. `theme.pattern` sets the placeholder art.
+  - `services.layout`: `packs` (detailed packages), `cards` or `list` (a price list).
+  - Sections: `menu` (categories, prices, dietary filters), `plans` (membership or pricing
+    cards), `timetable` (classes by day, opens on today), `team`, `hours` (with an open-now
+    light), `beforeAfter`, `process`, `work` (gallery), `areas` (town checker), `faq`, `quote`.
+  - `order` lists which sections appear and in what order. Leave one out and it is not shown.
+- **Every site also has** a scripted chat, a Call / Text / Quote bar on phones and a multi-step
+  quote or booking form.
 
 ### New client site
 

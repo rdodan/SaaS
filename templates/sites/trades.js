@@ -1,6 +1,6 @@
 // Example client: plumbing and heating. Made-up business, placeholder contact details.
 window.SITE = {
-  catalog: { label: "Trades and home services", blurb: "Clean and trustworthy. Suits plumbers, electricians, roofers, cleaners, landscapers." },
+  catalog: { label: "Trades and home services", blurb: "Bright and trustworthy. Floating menu, service cards, a town checker and a big phone button. Suits plumbers, electricians, roofers, cleaners, landscapers." },
   business: {
     name: "Brightline Plumbing",
     logo: ["Brightline", " Plumbing"],
@@ -11,26 +11,33 @@ window.SITE = {
     mapsUrl: "https://www.google.com/maps",
     reviewsUrl: "https://www.google.com/maps",
   },
-  theme: { mode: "dark", bg: "#0a1622", bg2: "#0f1f30", ink: "#eef4fa", muted: "#93a6ba", line: "#1f3348", accent: "#ffb020", accentInk: "#10161d", filmBg: "#06101a", display: "Archivo", body: "Inter", radius: "10px" },
-  film: {
-    chapters: [
-      { title: "It always leaks on a Sunday." },
-      { title: "So we answer on a Sunday.", text: "A real person picks up, tells you when we will arrive, and turns up then." },
-      { title: "Fixed price. Tidy work.", text: "You get the price before we start, and a clean floor when we leave." },
-    ],
+  theme: { mode: "light", bg: "#f6f9fc", bg2: "#e9f0f7", ink: "#0d2238", muted: "#55697d", line: "#cfdbe7", accent: "#1166ee", accentInk: "#ffffff", display: "Archivo", body: "Inter", uppercase: false, radius: "12px", card: "20px", header: "pill", pattern: "dots" },
+  hero: {
+    style: "split",
+    flip: true,
+    title: "Plumbing and heating in Your Town",
+    lines: ["It always leaks", "on a Sunday."],
+    text: "So we answer on a Sunday. A real person picks up, tells you when we will arrive, and turns up then.",
+    cta: "Get a fixed quote",
+    phoneLabel: "Emergency?",
+    points: ["Fixed prices", "Fully insured", "Tidy work, guaranteed"],
+    card: { title: "Answering calls now", text: "Emergencies usually seen the same day." },
   },
-  hero: { title: "Plumbing and heating in Your Town", cta: "Get a quote" },
+  order: ["services", "process", "areas", "work", "faq", "quote"],
   services: {
+    layout: "cards",
     kicker: "What we do",
-    title: ["Repairs.", "Installs. Emergencies."],
+    title: ["Repairs. Installs.", "Emergencies."],
     items: [
-      { name: "Repairs and Emergencies", text: "Leaks, bursts, blockages and no hot water. Same-day where we can.", groups: [{ label: "Common jobs", items: ["Leaking taps and pipes", "Blocked drains and toilets", "Burst pipes", "No heating or hot water"] }], steps: ["Call or text us with a photo", "We give a time and a price range", "Fault found and price confirmed before work", "Fixed, tested and cleaned up"] },
-      { name: "Bathrooms and Heating", text: "New bathrooms, boilers and radiators, planned around your household.", groups: [{ label: "Bathrooms", items: ["Design help", "Full fit-out", "Tiling and finishing"] }, { label: "Heating", items: ["Boiler replacement", "Radiators and valves", "Annual service"] }] },
+      { name: "Emergency repairs", text: "Leaks, bursts and no hot water. Same day where we can.", groups: [{ items: ["Burst and leaking pipes", "No heating or hot water", "Overflowing tanks"] }] },
+      { name: "Blocked drains", text: "Cleared properly, with the cause found.", groups: [{ items: ["Sinks and toilets", "Outside drains", "Camera inspection"] }] },
+      { name: "Bathrooms", text: "From a new tap to a full refit.", groups: [{ items: ["Design help", "Full fit-out", "Tiling and finishing"] }] },
+      { name: "Boilers and heating", text: "Replacements, repairs and yearly servicing.", groups: [{ items: ["Boiler replacement", "Radiators and valves", "Annual service"] }] },
     ],
   },
   process: { kicker: "How it works", title: ["No surprises.", "Three steps."], steps: [{ title: "Tell us the problem", text: "A photo or short video is often enough for a price." }, { title: "Fixed quote", text: "Written down, before any work starts." }, { title: "Done properly", text: "Tested, tidied and guaranteed." }] },
-  work: { kicker: "Recent jobs", title: ["Real homes.", "Real work."], text: "Replace these tiles with your own photos.", items: [{ tag: "Bathroom", title: "Full refit" }, { tag: "Heating", title: "Boiler swap" }, { tag: "Repair", title: "Burst pipe" }] },
   areas: { kicker: "Areas we cover", title: ["Local,", "and nearby."], text: "If you are close to one of these, ask.", groups: [{ name: "Your Town", towns: ["Town Centre", "Northfield", "Southgate", "Riverside"] }, { name: "Nearby", towns: ["Ashby", "Millbrook", "Oakley", "Kingsley", "Lakeside"] }] },
+  work: { nav: "Recent jobs", kicker: "Recent jobs", title: ["Real homes.", "Real work."], text: "Replace these tiles with your own photos.", items: [{ tag: "Bathroom", title: "Full refit" }, { tag: "Heating", title: "Boiler swap" }, { tag: "Repair", title: "Burst pipe" }] },
   faq: { kicker: "Questions", title: ["Straight", "answers."], items: [{ q: "Do you charge a call-out fee?", a: "We tell you any charge before we set off, so there is never a surprise." }, { q: "Are you insured?", a: "Yes, fully. Certificates on request." }, { q: "How fast can you come?", a: "Emergencies are usually same day. Planned work is booked to suit you." }] },
   quote: {
     kicker: "Free quote",
@@ -38,7 +45,7 @@ window.SITE = {
     text: "Three quick questions.",
     endpoint: "",
     steps: [
-      { title: "What do you need?", name: "job", options: ["Emergency repair", "Repair, not urgent", "New bathroom", "Boiler or heating", "Something else"] },
+      { title: "What do you need?", name: "job", options: ["Emergency repairs", "Blocked drains", "Bathrooms", "Boilers and heating", "Something else"] },
       { title: "How soon?", name: "urgency", options: ["Today", "This week", "Just planning"] },
     ],
   },

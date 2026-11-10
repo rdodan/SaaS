@@ -1,6 +1,6 @@
 // Example client: car detailing. Made-up business, placeholder contact details.
 window.SITE = {
-  catalog: { label: "Detailing and car care", blurb: "Dark and cinematic. Suits detailers, body shops, tinting and wraps." },
+  catalog: { label: "Detailing and car care", blurb: "Dark and cinematic. A story that plays as you scroll, a before and after slider and detailed packages. Suits detailers, body shops, tinting and wraps." },
   business: {
     name: "Gloss Garage",
     logo: ["Gloss", "Garage"],
@@ -23,7 +23,7 @@ window.SITE = {
     // To use real footage: export a clip as numbered JPGs and set
     // sequence: { path: "frames/frame_{n}.jpg", count: 120, pad: 4 }
   },
-  hero: { title: "Professional car detailing in Your Town", cta: "Book now" },
+  hero: { style: "film", title: "Professional car detailing in Your Town", cta: "Book now" },
   beforeAfter: { kicker: "Before and after", title: ["Same car.", "New light."], text: "The only difference is a careful, step-by-step detail." },
   services: {
     kicker: "Detailing packages",

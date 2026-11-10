@@ -21,13 +21,111 @@
     }
     document.documentElement.classList.add("js");
     $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
+    chrome();
     film(site);
     reveal();
+    tabs(site);
+    diet();
+    openNow(site);
     beforeAfter();
     areas(site);
     wizard(site);
     chat(site);
     phones(site);
+  }
+
+  // ---------- header, marquee, parallax ----------
+
+  function chrome() {
+    const bar = $(".bar");
+    $$(".marquee-track").forEach((track) => {
+      const items = [...track.children];
+      for (let n = 0; n < 5; n += 1) items.forEach((item) => track.append(item.cloneNode(true)));
+    });
+    const drift = calm ? [] : $$("[data-parallax]");
+    let queued = false;
+    const update = () => {
+      queued = false;
+      bar.classList.toggle("solid", window.scrollY > 10);
+      document.documentElement.style.setProperty("--scroll", Math.min(window.scrollY, 1200));
+      drift.forEach((el) => (el.style.translate = "0 " + (Math.min(window.scrollY, 1200) * 0.12).toFixed(1) + "px"));
+    };
+    window.addEventListener("scroll", () => {
+      if (!queued) requestAnimationFrame(update);
+      queued = true;
+    }, { passive: true });
+    update();
+  }
+
+  // ---------- tabs: menu categories and timetable days ----------
+
+  function tabs(site) {
+    const today = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()];
+    $$("[data-tabs]").forEach((box) => {
+      const buttons = $$("[data-tab]", box);
+      const panels = $$("[data-panel]", box);
+      const show = (index, focus) => {
+        buttons.forEach((b, i) => {
+          b.setAttribute("aria-selected", String(i === index));
+          b.tabIndex = i === index ? 0 : -1;
+        });
+        panels.forEach((p, i) => (p.hidden = i !== index));
+        if (focus) buttons[index].focus();
+      };
+      buttons.forEach((b, i) => {
+        b.addEventListener("click", () => show(i));
+        b.addEventListener("keydown", (event) => {
+          if (event.key === "ArrowRight") show((i + 1) % buttons.length, true);
+          if (event.key === "ArrowLeft") show((i - 1 + buttons.length) % buttons.length, true);
+        });
+      });
+      // A timetable opens on today's classes.
+      const start = box.dataset.tabs === "days" ? panels.findIndex((p) => p.dataset.name === today) : 0;
+      show(Math.max(0, start));
+    });
+  }
+
+  // Dietary filter: fade the dishes that do not match every chosen tag.
+  function diet() {
+    const chips = $$("[data-diet]");
+    if (!chips.length) return;
+    const apply = () => {
+      const wanted = chips.filter((c) => c.getAttribute("aria-pressed") === "true").map((c) => c.dataset.diet);
+      $$(".dishes li").forEach((li) => {
+        const tags = li.dataset.tags.split(" ");
+        // A vegan dish also counts as vegetarian.
+        const has = (tag) => tags.includes(tag) || (tag === "v" && tags.includes("vg"));
+        li.classList.toggle("dim", !wanted.every(has));
+      });
+    };
+    chips.forEach((chip) =>
+      chip.addEventListener("click", () => {
+        chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true"));
+        apply();
+      })
+    );
+  }
+
+  // Opening hours: mark today and say whether the business is open right now.
+  // Uses the visitor's clock, which is right for local customers.
+  function openNow(site) {
+    if (!site.hours) return;
+    const now = new Date();
+    const index = (now.getDay() + 6) % 7; // config lists Monday first
+    const day = site.hours.days[index];
+    const minutes = (text) => {
+      const [h, m] = String(text).split(":").map(Number);
+      return h * 60 + (m || 0);
+    };
+    $$('.hours tr[data-day="' + index + '"]').forEach((row) => row.classList.add("today"));
+    if (!day) return;
+    const current = now.getHours() * 60 + now.getMinutes();
+    const open = !day.closed && current >= minutes(day.open) && current < minutes(day.close);
+    $$("[data-open-badge]").forEach((badge) => {
+      badge.classList.toggle("on", open);
+      badge.textContent = open ? "Open now, until " + day.close : day.closed || current >= minutes(day.close) ? "Closed now" : "Opens today at " + day.open;
+    });
+    $$("[data-open-today]").forEach((el) => (el.textContent = day.closed ? "Closed today" : "Today " + day.open + " to " + day.close));
   }
 
   // ---------- scroll-driven opening ----------
@@ -39,7 +137,6 @@
     const images = $$(".film-img", section);
     const canvas = $(".film-canvas", section);
     const ctx = canvas.getContext("2d");
-    const bar = $(".bar");
     const count = slides.length;
     const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#f2a900";
     const rgb = hexToRgb(accent);
@@ -140,7 +237,6 @@
         img.style.opacity = k === current ? Math.min(clamp(local / 0.3), clamp((1 - local) / 0.3)) : 0;
         if (!calm) img.style.transform = `scale(${(1.04 + (k === current ? local : 0) * 0.08).toFixed(3)})`;
       });
-      bar.classList.toggle("solid", window.scrollY > 10);
       section.classList.toggle("done", progress >= 1);
     }
 
