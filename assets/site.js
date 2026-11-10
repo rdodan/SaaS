@@ -27,6 +27,8 @@
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           entry.target.classList.add("in");
+          // Once it has arrived, hand the element back to its normal styles (hover etc).
+          setTimeout(() => entry.target.classList.remove("reveal"), 1500);
           observer.unobserve(entry.target);
         });
       },
