@@ -1,0 +1,213 @@
+:root {
+  --bg: #f6f2ea;
+  --surface: #fffdf8;
+  --ink: #1c2420;
+  --muted: #5b655f;
+  --line: #ddd5c6;
+  --brand: #1f4d3a;
+  --brand-ink: #ffffff;
+  --accent: #b9621b;
+  --good: #1f6b45;
+  --warn: #8a5a00;
+  --bad: #a2331f;
+  --good-bg: #dcefe3;
+  --warn-bg: #f6e7c4;
+  --bad-bg: #f6dcd5;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141917;
+    --surface: #1c2320;
+    --ink: #ecefe9;
+    --muted: #a3ada6;
+    --line: #313a35;
+    --brand: #7fcaa3;
+    --brand-ink: #10231a;
+    --accent: #e7a15f;
+    --good: #8fd6ae;
+    --warn: #e8c46e;
+    --bad: #f0a091;
+    --good-bg: #1d3a2b;
+    --warn-bg: #3d3113;
+    --bad-bg: #44211a;
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.6 var(--sans);
+}
+h1, h2, h3 { font-family: var(--serif); line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.8rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: 1.5rem; }
+h3 { font-size: 1.25rem; }
+p { margin: 0 0 1rem; }
+a { color: var(--brand); }
+
+.top, main > section, .foot {
+  padding-inline: max(16px, calc((100vw - 1080px) / 2));
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1rem;
+  flex-wrap: wrap;
+}
+.brand { font: 600 1.2rem var(--serif); color: var(--ink); text-decoration: none; }
+.top nav { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+.top nav a:not(.btn) { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+.top nav a:not(.btn):hover { color: var(--ink); }
+
+.btn {
+  display: inline-block;
+  background: var(--brand);
+  color: var(--brand-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.8rem 1.3rem;
+  font: 600 1rem var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { filter: brightness(1.1); }
+.btn.small { padding: 0.5rem 0.9rem; font-size: 0.95rem; }
+.link { font-weight: 600; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 3rem;
+  align-items: center;
+  padding-block: 4rem 5rem;
+}
+.eyebrow {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.lede { font-size: 1.15rem; color: var(--muted); max-width: 34rem; margin-top: 1.25rem; }
+.cta-row { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.75rem; }
+
+.scorecard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.5rem;
+  transform: rotate(1.2deg);
+  box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.45);
+}
+.scorecard-title { font: 600 1.1rem var(--serif); margin-bottom: 0.75rem; }
+.scorecard ul { list-style: none; margin: 0; padding: 0; }
+.scorecard li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.95rem;
+}
+.mark {
+  flex: 0 0 4.4rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 99px;
+  padding: 0.15rem 0;
+}
+.mark.good { background: var(--good-bg); color: var(--good); }
+.mark.warn { background: var(--warn-bg); color: var(--warn); }
+.mark.bad { background: var(--bad-bg); color: var(--bad); }
+.scorecard-note { margin: 0.9rem 0 0; font-size: 0.9rem; color: var(--muted); }
+
+.band { padding-block: 4rem; }
+.band.alt { background: var(--surface); border-block: 1px solid var(--line); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.25rem; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+.card h3 { margin-bottom: 0.6rem; }
+.card p { color: var(--muted); font-size: 0.97rem; }
+.card ul { margin: 0; padding-left: 1.1rem; font-size: 0.93rem; }
+.card li { margin-bottom: 0.3rem; }
+
+.steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2rem;
+}
+.steps li { counter-increment: step; }
+.steps li::before {
+  content: counter(step);
+  display: block;
+  font: 600 2.4rem var(--serif);
+  color: var(--accent);
+}
+.steps h3 { margin: 0.25rem 0 0.5rem; }
+.steps p { color: var(--muted); }
+
+.faq { max-width: 46rem; }
+.faq details { border-top: 1px solid var(--line); padding: 1rem 0; }
+.faq details:last-child { border-bottom: 1px solid var(--line); }
+.faq summary { font-weight: 600; cursor: pointer; }
+.faq details p { margin: 0.75rem 0 0; color: var(--muted); }
+
+.contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 3rem; }
+.direct { display: flex; flex-direction: column; gap: 0.35rem; font-weight: 600; }
+form { display: grid; gap: 1rem; }
+label { display: grid; gap: 0.35rem; font-size: 0.92rem; font-weight: 600; }
+.optional { font-weight: 400; color: var(--muted); }
+input, select, textarea {
+  font: inherit;
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.7rem 0.8rem;
+  width: 100%;
+}
+.hp { position: absolute; left: -9999px; }
+form .btn { justify-self: start; }
+#form-status { margin: 0; min-height: 1.5em; font-size: 0.95rem; }
+#form-status.error { color: var(--bad); }
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-block: 1.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 800px) {
+  .hero, .contact { grid-template-columns: 1fr; gap: 2rem; }
+  .hero { padding-block: 2rem 3rem; }
+  .scorecard { transform: none; }
+  .band { padding-block: 3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

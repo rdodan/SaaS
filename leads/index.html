@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Lead finder</title>
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="leads.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="../">Lead finder</a>
+    <nav aria-label="Tools">
+      <button type="button" class="ghost" id="add-manual">Add a business</button>
+      <button type="button" class="ghost" id="export-csv">Export CSV</button>
+      <button type="button" class="ghost" id="export-json">Backup</button>
+      <label class="ghost file">Restore<input type="file" id="import-json" accept="application/json" hidden></label>
+    </nav>
+  </header>
+
+  <main class="tool">
+    <form id="search" class="panel">
+      <label class="grow">Town, city or postcode
+        <input id="place" placeholder="e.g. Leeds, UK" required>
+      </label>
+      <label>Radius
+        <select id="radius">
+          <option value="1000">1 km</option>
+          <option value="2000" selected>2 km</option>
+          <option value="5000">5 km</option>
+          <option value="10000">10 km</option>
+        </select>
+      </label>
+      <button class="btn" type="submit" id="go">Find businesses</button>
+      <fieldset id="groups">
+        <legend>Business types</legend>
+      </fieldset>
+      <p id="status" role="status"></p>
+    </form>
+
+    <section class="panel filters" aria-label="Filter your list">
+      <label class="grow">Search your list
+        <input id="q" type="search" placeholder="Name, street or type">
+      </label>
+      <label>Type
+        <select id="f-group"><option value="">All types</option></select>
+      </label>
+      <label>Stage
+        <select id="f-status"><option value="">All stages</option></select>
+      </label>
+      <label class="check"><input type="checkbox" id="f-noweb"> No website listed</label>
+      <label class="check"><input type="checkbox" id="f-chains" checked> Hide chains</label>
+      <p id="count"></p>
+    </section>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Business</th>
+            <th>Gaps found</th>
+            <th>Contact</th>
+            <th title="Type in what you see on Google Maps">Google rating</th>
+            <th>Stage</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p id="empty" class="empty">
+        No businesses yet. Search a place above, and they will be saved in this browser so you can work through them.
+      </p>
+      <button type="button" class="ghost" id="more" hidden>Show more</button>
+    </div>
+
+    <p class="fine">
+      Business data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>.
+      It is community-edited, so "no website listed" means none is recorded there. Check before you pitch.
+      Your list, ratings and notes are stored only in this browser. Use Backup to keep a copy.
+      <button type="button" class="linklike" id="clear">Clear list</button>
+    </p>
+  </main>
+
+  <dialog id="manual">
+    <form method="dialog" id="manual-form">
+      <h2>Add a business</h2>
+      <label>Name <input name="name" required></label>
+      <label>Address <input name="address"></label>
+      <label>Phone <input name="phone"></label>
+      <label>Website <input name="website" placeholder="Leave empty if they have none"></label>
+      <div class="dialog-actions">
+        <button type="button" class="ghost" id="manual-cancel">Cancel</button>
+        <button class="btn small" type="submit">Add</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="../config.js"></script>
+  <script src="leads.js"></script>
+</body>
+</html>
