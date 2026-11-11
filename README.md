@@ -90,6 +90,26 @@ To use real footage in the opening, export a short clip as numbered JPGs and set
 uses moving light in the brand colour. Set `quote.endpoint` to a form service URL to
 receive quote requests directly; left empty, the form opens the visitor's email app.
 
+## Site builder (client intake)
+
+`intake/index.html` is a form with a live preview. You, or the client, type in the business's
+details and watch their site take shape beside the form.
+
+- **What it asks:** style and main colour, name and headline, contact details, opening hours,
+  services or menu with prices, common questions and notes.
+- **What it produces:** a finished site file in the same format as `templates/sites/*.js`.
+  Anything left empty keeps the example's content, so the preview is never blank.
+- **With a client in the room:** fill it in together, then open "For the studio" and choose
+  **Download site file**. Put the file in `templates/sites/` and it is a normal client site.
+- **Sent to a client:** they press **Send my answers**. With `formEndpoint` set in `config.js`
+  the answers arrive by email. Without it, an answers file is downloaded for them to attach
+  to an email. Use **Load answers** to open it, then download the site file.
+- **Pre-filled links:** add what you know to the address, for example
+  `intake/index.html?type=barber&name=Oak%20Lane&phone=555-0100`. The lead finder's
+  "Build a preview site" link does this for you.
+- Answers are saved in the browser as they are typed, so the form can be finished later on
+  the same device.
+
 ## Publish for free
 
 Any static host works. Two options:

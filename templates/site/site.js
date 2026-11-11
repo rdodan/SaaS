@@ -491,6 +491,30 @@
 
   if (window.SITE) return start(window.SITE);
 
+  // Builder preview: ?preview=1 shows the config the site builder saved in this browser.
+  if (new URLSearchParams(location.search).has("preview")) {
+    let draft = null;
+    try {
+      draft = JSON.parse(localStorage.getItem("sitePreview"));
+    } catch (err) { /* nothing saved */ }
+    if (!draft || !draft.business) {
+      $("#app").innerHTML = '<p style="padding:2rem;font-family:sans-serif">Nothing to preview yet. <a href="../../intake/index.html">Open the site builder</a></p>';
+      return;
+    }
+    start(draft);
+    // Keep the reader's place when the builder refreshes the preview.
+    const at = Number(sessionStorage.getItem("previewScroll"));
+    if (at) {
+      document.documentElement.style.scrollBehavior = "auto";
+      window.scrollTo(0, at);
+      document.documentElement.style.scrollBehavior = "";
+    }
+    window.addEventListener("beforeunload", () => sessionStorage.setItem("previewScroll", String(window.scrollY)));
+    // In its own tab, refresh when the builder saves a change.
+    if (window.top === window) window.addEventListener("storage", (event) => event.key === "sitePreview" && location.reload());
+    return;
+  }
+
   // Preview mode: ?site=name loads ../sites/name.js
   const name = (new URLSearchParams(location.search).get("site") || "detailing").replace(/[^a-z0-9-]/gi, "");
   const script = document.createElement("script");

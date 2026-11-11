@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Build your website</title>
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="intake.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="../index.html" data-cfg="name">Your Studio</a>
+    <nav aria-label="Actions">
+      <span id="saved" class="saved" role="status"></span>
+      <a class="btn small" id="open-preview" href="../templates/site/index.html?preview=1" target="_blank" rel="noopener">Open preview in a new tab</a>
+    </nav>
+  </header>
+
+  <main class="builder">
+    <form id="form" class="questions" novalidate>
+      <div class="intro">
+        <h1>Tell us about your business</h1>
+        <p>Fill in what you can. Your website takes shape on the right as you type, and your answers are saved on this device as you go.</p>
+      </div>
+
+      <fieldset>
+        <legend><span>1</span> Style</legend>
+        <p class="hint">Pick the closest starting point. Colours, wording and photos are all changed to yours.</p>
+        <div id="types" class="types"></div>
+        <label class="colour">Your main colour
+          <input type="color" id="accent" data-field="accent">
+          <button type="button" class="linklike plain" id="accent-reset">Use the example's colour</button>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>2</span> The basics</legend>
+        <label>Business name <input data-field="name" autocomplete="organization" required></label>
+        <label>What you are, in a few words <input data-field="tagline" placeholder="e.g. Family-run bakery"></label>
+        <label>Town or area <input data-field="town" placeholder="e.g. Harrogate"></label>
+        <label>Headline for the top of the page <small>(optional, one short line or two)</small>
+          <textarea data-field="headline" rows="2" placeholder="Leave empty and we will write one"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>3</span> How customers reach you</legend>
+        <div class="two">
+          <label>Phone <input data-field="phone" type="tel" autocomplete="tel"></label>
+          <label>Email <input data-field="email" type="email" autocomplete="email"></label>
+        </div>
+        <label>Address <input data-field="address" autocomplete="street-address"></label>
+        <label>Towns you serve <small>(optional, separated by commas)</small> <input data-field="towns" placeholder="e.g. Ripon, Knaresborough, Wetherby"></label>
+        <label>Link to your Google listing <small>(optional)</small> <input data-field="reviewsUrl" type="url" placeholder="https://"></label>
+        <label>Instagram link <small>(optional)</small> <input data-field="instagramUrl" type="url" placeholder="https://"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>4</span> Opening hours</legend>
+        <label class="check"><input type="checkbox" data-field="showHours"> Show opening hours on the website</label>
+        <div id="hours" class="hours-grid"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>5</span> <span id="items-title">What you offer</span></legend>
+        <p class="hint" id="items-hint"></p>
+        <div id="items" class="rows"></div>
+        <button type="button" class="ghost" id="add-item">Add another</button>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>6</span> Questions customers always ask</legend>
+        <p class="hint">Two or three is plenty. Leave empty to keep the examples for now.</p>
+        <div id="faqs" class="rows"></div>
+        <button type="button" class="ghost" id="add-faq">Add a question</button>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>7</span> Anything else</legend>
+        <label>Notes for us <small>(what you want customers to do, sites you like, anything we should know)</small>
+          <textarea data-field="notes" rows="4"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset class="finish">
+        <legend><span>8</span> Send it</legend>
+        <p class="hint">Photos and your logo are best sent separately by email or text.</p>
+        <div class="actions">
+          <button type="submit" class="btn" id="send">Send my answers</button>
+          <button type="button" class="linklike plain" id="reset">Start again</button>
+        </div>
+        <p id="status" role="status"></p>
+      </fieldset>
+
+      <details class="studio">
+        <summary>For the studio</summary>
+        <p class="hint">Turn a set of answers into a site file for <code>templates/sites/</code>.</p>
+        <div class="actions">
+          <button type="button" class="ghost" id="download-site">Download site file</button>
+          <button type="button" class="ghost" id="download-answers">Download answers</button>
+          <label class="ghost file">Load answers<input type="file" id="load-answers" accept="application/json" hidden></label>
+        </div>
+      </details>
+    </form>
+
+    <aside class="preview" aria-label="Preview of your website">
+      <div class="preview-bar">
+        <span>Live preview</span>
+        <div class="views" role="group" aria-label="Preview size">
+          <button type="button" class="ghost" data-size="desktop" aria-pressed="true">Computer</button>
+          <button type="button" class="ghost" data-size="phone" aria-pressed="false">Phone</button>
+        </div>
+      </div>
+      <div class="frame-wrap" id="frame-wrap"><iframe id="frame" title="Website preview"></iframe></div>
+    </aside>
+  </main>
+
+  <script src="../config.js"></script>
+  <script src="../templates/sites/index.js"></script>
+  <script src="intake.js"></script>
+</body>
+</html>

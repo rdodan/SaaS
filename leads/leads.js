@@ -299,6 +299,11 @@
       contact.append(el("div", {}, [siteBtn]));
     }
     if (!lead.email) contact.append(el("div", {}, [link("https://www.google.com/search?q=" + encodeURIComponent('"' + lead.name + '" ' + (lead.address || "") + " email contact"), "Search for an email")]));
+    // Start a preview site for this business in the site builder, with what we know filled in.
+    const builder = new URLSearchParams({ type: EXAMPLE[lead.group] || "trades", name: lead.name });
+    if (lead.phone) builder.set("phone", lead.phone);
+    if (lead.address) builder.set("address", lead.address);
+    contact.append(el("div", {}, [link("../intake/index.html?" + builder, "Build a preview site")]));
     const draftBtn = el("button", { type: "button", className: "draft-btn", textContent: followUpDue(lead) ? "Draft follow-up" : "Draft email" });
     draftBtn.dataset.draft = lead.id;
     contact.append(draftBtn);

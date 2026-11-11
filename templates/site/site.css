@@ -605,6 +605,11 @@ html:not(.js) .tab-list { display: none; }
 .js :is(.sec-head, .lines).reveal.in .line { clip-path: inset(0 0 -20% 0); transform: none; transition: clip-path 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .js :is(.sec-head, .lines).reveal.in .line + .line { transition-delay: 0.12s; }
 
+@media (max-width: 1100px) {
+  .bar .phone { display: none; }
+  .bar nav { gap: 1rem; }
+}
+
 @media (max-width: 860px) {
   .bar nav, .bar .phone { display: none; }
   .pack, .areas, .faq, .quote, .split-2, .hero-split { grid-template-columns: 1fr; }
